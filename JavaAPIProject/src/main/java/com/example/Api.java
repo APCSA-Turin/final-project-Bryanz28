@@ -53,7 +53,7 @@ public class Api {
             try {
 
                 //build the url for the api
-                String encodedAddress = URLEncoder.encode(address, "UTF-8"); //debugged with Copilot
+                String encodedAddress = URLEncoder.encode(address, "UTF-8"); //debugged with Copilot (needs to be encoded)
                 String endpoint = String.format("https://api.tomtom.com/search/2/geocode/%s.json?key=%s", encodedAddress, apiKey);
 
                 //create a url object and open an http connection
@@ -120,10 +120,6 @@ public class Api {
             content.append(inputLine);
         }
 
-        //close to avoid resource leak
-        buff.close();
-        connection.disconnect();
-
         // Return response
         return content.toString();
     }
@@ -133,7 +129,7 @@ public class Api {
             //turns string to json obj
             JSONObject obj = new JSONObject(json);
 
-            // Extracts and returns distance
+            // Filter and return distance
             return obj
                 .getJSONArray("routes")
                 .getJSONObject(0)
@@ -144,6 +140,7 @@ public class Api {
     public static String getHistory() {
         String content = "";
         try (BufferedReader reader = new BufferedReader(new FileReader("JavaAPIProject/src/main/java/com/example/TravelData.txt"))) {
+            
             //the content of each line in the text file
             String line; 
             while ((line = reader.readLine()) != null) {
